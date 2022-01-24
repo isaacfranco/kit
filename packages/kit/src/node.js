@@ -52,9 +52,14 @@ function get_raw_body(req) {
 
 /** @type {import('@sveltejs/kit/node').GetRequest} */
 export async function getRequest(base, req) {
+	const headers = Object.fromEntries(
+		Object.entries(/** @type {Record<string, string>} */ (req.headers)).filter(
+			([key]) => !/^:/.test(key)
+		)
+	);
 	return new Request(base + req.url, {
 		method: req.method,
-		headers: /** @type {Record<string, string>} */ (req.headers),
+		headers,
 		body: await get_raw_body(req) // TODO stream rather than buffer
 	});
 }
